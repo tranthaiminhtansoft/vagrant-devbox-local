@@ -1,0 +1,18 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANT_USER_NAME = "#{ENV['USERNAME']}"
+VAGRANT_INSTANCE_NAME = "devbox-#{VAGRANT_USER_NAME}-1804"
+
+Vagrant.configure("2") do |config|
+  config.vm.define VAGRANT_INSTANCE_NAME
+  config.vm.hostname = VAGRANT_INSTANCE_NAME
+
+  #config.vm.provision "file", source: "~/.aws", destination: "/tmp/aws_config"
+  config.vm.provision "file", source: "~/.ssh", destination: "/tmp/ssh_config"
+  config.vm.provision "file", source: "../playbook.yml", destination: "/tmp/playbook.yml"
+  config.vm.provision "ansible_local" do |ansible|
+    ansible.playbook = "playbook.yml"
+    ansible.provisioning_path = "/tmp"
+  end
+end
